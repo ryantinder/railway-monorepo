@@ -16,3 +16,12 @@ export interface Pool {
     ts: number
     tx: string
 }
+
+export interface Adapter {
+    chainid: number
+    underlyingVault: string
+    vaultAdapter: string
+    vaultAsset: string
+    ts: number
+    status: number
+}

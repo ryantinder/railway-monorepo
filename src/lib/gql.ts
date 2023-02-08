@@ -28,7 +28,6 @@ export interface PoolQueryResponse {
 }
 
 export interface PoolCreated {
-    id: string;
     poolId: string
     payoutAsset: string
     vault: string
@@ -44,3 +43,33 @@ export interface PoolCreated {
     transactionHash: string
     blockTimestamp: number
 }
+
+export const adapterQuery = JSON.stringify({
+    query: `query {
+        vaultAdapterRegistereds {
+            underlyingVault
+            vaultAdapter
+            vaultAsset
+            blockTimestamp
+        }
+    }`,
+    variables: {}
+});
+
+export interface AdapterQueryResponse {
+    data: {
+        data: {
+            vaultAdapterRegistereds: AdapterRegistered[]
+        }
+    }
+}
+
+export interface AdapterRegistered {
+    underlyingVault: string
+    vaultAdapter: string
+    vaultAsset: string
+    blockTimestamp: number
+}
+
+
+

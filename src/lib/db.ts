@@ -1,6 +1,6 @@
 import { Client } from 'pg';
 import { ethers } from 'ethers';
-import { Pool } from './interfaces';
+import { Adapter, Pool } from './interfaces';
 
 const client = new Client({
     host: process.env.MYSQLHOST,
@@ -42,6 +42,35 @@ export const addPool = async (pool: Pool) => {
 export const readPoolIds = async (chainId: number) => {
     const res = await client.query<{poolid: string}>(`SELECT poolid FROM POOLS WHERE chainId = ${chainId}`);
     return res.rows.map(row => row.poolid);
+}
+// Add Pool to DB
+export const addAdapter = async (adapter: Adapter) => {
+    // check if id alr exists
+    const res = await client.query<Adapter>(`SELECT * FROM ADAPTERS WHERE vault = '${adapter.underlyingVault}' AND chainId = ${adapter.chainid} LIMIT 1`);
+    if (res.rowCount == 0) {
+        const sql = `CALL addadapter(${adapter.chainid}, '${adapter.underlyingVault}', '${adapter.vaultAdapter}', '${adapter.vaultAsset}', 1, ${adapter.ts})`
+        await client.query(sql)
+        console.log(`[${adapter.chainid}] adapter = ${adapter.vaultAdapter} added`)
+    } else if (res.rowCount == 1) {
+        if (adapter.ts > res.rows[0].ts && adapter.vaultAdapter != res.rows[0].vaultAdapter) {
+            const sql = `UPDATE ADAPTERS 
+                SET 
+                adapter = '${adapter.vaultAdapter}',
+                ts = ${adapter.ts},
+                asset = '${adapter.vaultAsset}',
+                WHERE vault = '${adapter.underlyingVault}' and chainid = ${adapter.chainid}
+                `
+            await client.query(sql)
+            console.log(`[${adapter.chainid}] vault = ${adapter.underlyingVault} updated to adapter = ${adapter.vaultAdapter}`)
+        } else {
+            console.log(`[${adapter.chainid}] vault = ${adapter.underlyingVault} has already been replaced`)
+        }
+    }
+}
+// Read all adapters from chainid
+export const readAdapters = async (chainId: number) => {
+    const res = await client.query<{vault: string}>(`SELECT adapter FROM adapters WHERE chainId = ${chainId}`);
+    return res.rows.map(row => row.vault);
 }
 
 
