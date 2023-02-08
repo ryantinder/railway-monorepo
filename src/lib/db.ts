@@ -52,18 +52,20 @@ export const addAdapter = async (adapter: Adapter) => {
         await client.query(sql)
         console.log(`[${adapter.chainid}] adapter = ${adapter.vaultAdapter} added`)
     } else if (res.rowCount == 1) {
-        if (adapter.ts > res.rows[0].ts && adapter.vaultAdapter != res.rows[0].vaultAdapter) {
-            const sql = `UPDATE ADAPTERS 
-                SET 
-                adapter = '${adapter.vaultAdapter}',
-                ts = ${adapter.ts},
-                asset = '${adapter.vaultAsset}',
-                WHERE vault = '${adapter.underlyingVault}' and chainid = ${adapter.chainid}
-                `
-            await client.query(sql)
-            console.log(`[${adapter.chainid}] vault = ${adapter.underlyingVault} updated to adapter = ${adapter.vaultAdapter}`)
-        } else {
-            console.log(`[${adapter.chainid}] vault = ${adapter.underlyingVault} has already been replaced`)
+        if (adapter.vaultAdapter != res.rows[0].vaultAdapter) {
+            if (adapter.ts > res.rows[0].ts) {
+                const sql = `UPDATE ADAPTERS 
+                    SET 
+                    adapter = '${adapter.vaultAdapter}',
+                    ts = ${adapter.ts},
+                    asset = '${adapter.vaultAsset}',
+                    WHERE vault = '${adapter.underlyingVault}' and chainid = ${adapter.chainid}
+                    `
+                await client.query(sql)
+                console.log(`[${adapter.chainid}] vault = ${adapter.underlyingVault} updated to adapter = ${adapter.vaultAdapter}`)
+            } else {
+                console.log(`[${adapter.chainid}] vault = ${adapter.underlyingVault} has already been replaced`)
+            }
         }
     }
 }
