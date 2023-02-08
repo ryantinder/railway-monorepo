@@ -14,7 +14,7 @@ export const connect = async () => {
     await client.connect()
 }
 
-// add id
+// Add FNFT ID to DB
 export const addId = async (poolId: string, fnftId: number, quantity: number, face: number, usd: number, chainId: number) => {
     // check if id alr exists
     let res = await client.query(`SELECT * FROM FNFTS WHERE fnftId = ${fnftId} AND poolId = '${poolId}' AND chainId = ${chainId}`);
@@ -26,18 +26,22 @@ export const addId = async (poolId: string, fnftId: number, quantity: number, fa
     }
 }
 
-// add id
+// Add Pool to DB
 export const addPool = async (pool: Pool) => {
     // check if id alr exists
     const res = await client.query(`SELECT * FROM POOLS WHERE poolid = '${pool.poolId}' AND chainId = ${pool.chainid}`);
     if (res.rowCount == 0) {
         const sql = `CALL AddPool(${pool.chainid}, '${pool.poolId}', '${pool.payoutAsset}', '${pool.vault}', '${pool.vaultAsset}', '${pool.rate}', '${pool.addInterestRate}', '${pool.lockupPeriod}', '${pool.packetSize}', ${pool.packetSizeDecimals}, ${pool.isFixedTerm}, '${pool.poolName.replace(/'/g, "").replace(/;/g, "")}', '${pool.creator}', ${pool.ts}, '${pool.tx}')`
-        console.log(sql);
         await client.query(sql)
         console.log(`[${pool.chainid}] PoolID = ${pool.poolId} added`)
     } else {
         console.log(`[${pool.chainid}] PoolID = ${pool.poolId} alr exists`)
     }
+}
+// Read all pools from chainid
+export const readPoolIds = async (chainId: number) => {
+    const res = await client.query<{poolid: string}>(`SELECT poolid FROM POOLS WHERE chainId = ${chainId}`);
+    return res.rows.map(row => row.poolid);
 }
 
 
@@ -58,7 +62,6 @@ export const removeId = async (poolId: string, fnftId: number, chainId: number) 
 // add id
 export const addVolume = async (poolid: string, numPackets: bigint, chainid: number) => {
     // check if id alr exists
-
 
     // read volume, packet_size, packet_size_decimals and rate from db
     const res = await client.query<{ packetvolume: string }>(`SELECT packetVolume FROM POOLS WHERE poolid = '${poolid}' AND chainId = ${chainid} LIMIT 1`);
