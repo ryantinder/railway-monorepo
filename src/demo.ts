@@ -4,4 +4,4 @@ async function demo() {
     // console.log(process.argv[2]);
 }
 
-main().then()
+demo().then()

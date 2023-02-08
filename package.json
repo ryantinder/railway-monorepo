@@ -31,6 +31,10 @@
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "dev": "npm run build && node ./dist/indexer.js",
     "start:mainnet": "npm run build && node ./dist/indexer.js 1",
+    "start:optimism": "npm run build && node ./dist/indexer.js 10",
+    "start:fantom": "npm run build && node ./dist/indexer.js 250",
+    "start:arbitrum": "npm run build && node ./dist/indexer.js 42161",
+    "start:polygon": "npm run build && node ./dist/indexer.js 137",
     "lint": "eslint --ext .ts --fix src/**/*.ts test/**/*.ts",
     "preversion": "npm run build && npm run cover:check",
     "postversion": "git push && git push --tags",
@@ -43,6 +47,7 @@
     "@types/chai": "^4.1.6",
     "@types/mocha": "^9.0.0",
     "@types/node": "^18.7.18",
+    "@types/pg": "^8.6.6",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
     "chai": "^4.1.2",
@@ -62,6 +67,9 @@
     }
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
+    "ethers": "^6.0.2",
+    "pg": "^8.9.0",
     "sitka": "^1.0.5"
   }
 }
