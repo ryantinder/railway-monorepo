@@ -17,7 +17,6 @@ async function reconcile(chainid: number) {
         },
         data: poolQuery
     };
-
     const res = await axios(config) as PoolQueryResponse
     const graph_pools = res.data.data.poolCreateds;
     const db_pools = await readPoolIds(chainid);
@@ -46,7 +45,6 @@ async function reconcile(chainid: number) {
         }
     }
     await Promise.all(pool_promises);
-    console.log("DB matches subgraph");
 }
 async function main() {
     if (!process.argv[2]) {
