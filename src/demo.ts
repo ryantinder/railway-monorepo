@@ -1,6 +1,6 @@
 'use strict';
 
-async function main() {
+async function demo() {
     // console.log(process.argv[2]);
 }
 
