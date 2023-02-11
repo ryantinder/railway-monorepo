@@ -71,5 +71,30 @@ export interface AdapterRegistered {
     blockTimestamp: number
 }
 
+export const oracleQuery = JSON.stringify({
+    query: `query {
+        setTokenOracles {
+            oracle
+            token
+            blockTimestamp
+        }
+    }`,
+    variables: {}
+});
+
+export interface OracleQueryResponse {
+    data: {
+        data: {
+            setTokenOracles: Oracle[]
+        }
+    }
+}
+
+export interface Oracle {
+    oracle: string
+    token: string
+    blockTimestamp: number
+}
+
 
 

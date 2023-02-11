@@ -25,3 +25,10 @@ export interface Adapter {
     ts: number
     status: number
 }
+
+export interface Oracle {
+    chainid: number
+    oracle: string
+    asset: string
+    ts: number
+}

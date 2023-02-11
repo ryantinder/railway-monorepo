@@ -1,6 +1,6 @@
 import { Client } from 'pg';
 import { ethers } from 'ethers';
-import { Adapter, Pool } from './interfaces';
+import { Adapter, Pool, Oracle } from './interfaces';
 
 const client = new Client({
     host: process.env.MYSQLHOST,
@@ -43,7 +43,7 @@ export const readPoolIds = async (chainId: number) => {
     const res = await client.query<{poolid: string}>(`SELECT poolid FROM POOLS WHERE chainId = ${chainId}`);
     return res.rows.map(row => row.poolid);
 }
-// Add Pool to DB
+// Add Adapter to DB
 export const addAdapter = async (adapter: Adapter) => {
     // check if id alr exists
     const res = await client.query<Adapter>(`SELECT * FROM ADAPTERS WHERE vault = '${adapter.underlyingVault}' AND chainId = ${adapter.chainid} LIMIT 1`);
@@ -69,10 +69,40 @@ export const addAdapter = async (adapter: Adapter) => {
         }
     }
 }
+// Add Oracle to DB
+export const addOracle = async (oracle: Oracle) => {
+    // check if id alr exists
+    const res = await client.query<Oracle>(`SELECT * FROM ORACLES WHERE asset = '${oracle.asset}' AND chainId = ${oracle.chainid} LIMIT 1`);
+    if (res.rowCount == 0) {
+        const sql = `CALL addoracle(${oracle.chainid}, '${oracle.asset}', '${oracle.oracle}', ${oracle.ts})`
+        await client.query(sql)
+        console.log(`[${oracle.chainid}] oracle = ${oracle.asset} added`)
+    } else if (res.rowCount == 1) {
+        if (oracle.oracle != res.rows[0].oracle) {
+            if (oracle.ts > res.rows[0].ts) {
+                const sql = `UPDATE ORACLES 
+                    SET 
+                    oracle = '${oracle.oracle}',
+                    ts = ${oracle.ts},
+                    WHERE asset = '${oracle.asset}' and chainid = ${oracle.chainid}
+                    `
+                await client.query(sql)
+                console.log(`[${oracle.chainid}] asset = ${oracle.asset} updated to oracle = ${oracle.oracle}`)
+            } else {
+                console.log(`[${oracle.chainid}] asset = ${oracle.asset} oracle has already been replaced`)
+            }
+        }
+    }
+}
 // Read all adapters from chainid
 export const readAdapters = async (chainId: number) => {
     const res = await client.query<{vault: string}>(`SELECT adapter FROM adapters WHERE chainId = ${chainId}`);
     return res.rows.map(row => row.vault);
+}
+// Read all oracles from chainid
+export const readOracles = async (chainId: number) => {
+    const res = await client.query<{asset: string}>(`SELECT asset FROM oracles WHERE chainId = ${chainId}`);
+    return res.rows.map(row => row.asset);
 }
 
 
