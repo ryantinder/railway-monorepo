@@ -58,7 +58,7 @@ export const addAdapter = async (adapter: Adapter) => {
                     SET 
                     adapter = '${adapter.vaultAdapter}',
                     ts = ${adapter.ts},
-                    asset = '${adapter.vaultAsset}',
+                    asset = '${adapter.vaultAsset}'
                     WHERE vault = '${adapter.underlyingVault}' and chainid = ${adapter.chainid}
                     `
                 await client.query(sql)
@@ -83,7 +83,7 @@ export const addOracle = async (oracle: Oracle) => {
                 const sql = `UPDATE ORACLES 
                     SET 
                     oracle = '${oracle.oracle}',
-                    ts = ${oracle.ts},
+                    ts = ${oracle.ts}
                     WHERE asset = '${oracle.asset}' and chainid = ${oracle.chainid}
                     `
                 await client.query(sql)

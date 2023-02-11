@@ -18,21 +18,20 @@ async function reconcile(chainid: number) {
     const res = await axios(config) as AdapterQueryResponse
     const graph_adapters = [...new Set(res.data.data.vaultAdapterRegistereds)];
     const db_adapters = await readAdapters(chainid);
-    console.log(`[${chainid}]`, "Found", graph_adapters.length, "adapters in subgraph", "Found", db_adapters.length, "adapters in db");
-    const adapter_promises: Promise<void>[] = []
+    const distinct_graph_adapters = [...new Set(graph_adapters.map( adapter => adapter.underlyingVault ))]
+    console.log(`[${chainid}]`, "Found", graph_adapters.length, "adapters in subgraph", distinct_graph_adapters.length, "distinct, Found", db_adapters.length, "adapters in db");
     for (const adapter of graph_adapters) {
         if (!db_adapters.includes(adapter.vaultAdapter)) {
-            adapter_promises.push(addAdapter({
+            await addAdapter({
                 chainid: chainid,
                 underlyingVault: adapter.underlyingVault,
                 vaultAdapter: adapter.vaultAdapter,
                 vaultAsset: adapter.vaultAsset,
                 ts: adapter.blockTimestamp,
                 status: 1
-            }));
+            });
         }
     }
-    await Promise.all(adapter_promises);
 }
 async function main() {
     await connect();

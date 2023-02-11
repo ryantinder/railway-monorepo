@@ -18,19 +18,18 @@ async function reconcile(chainid: number) {
     const res = await axios(config) as OracleQueryResponse
     const graph_oracles = [...new Set(res.data.data.setTokenOracles)];
     const db_oracles = await readOracles(chainid);
-    console.log(`[${chainid}]`, "Found", graph_oracles.length, "oracles in subgraph", "Found", db_oracles.length, "oracles in db");
-    const adapter_promises: Promise<void>[] = []
+    const distinct_graph_oracles = [...new Set(graph_oracles.map( oracle => oracle.token ))]
+    console.log(`[${chainid}]`, "Found", graph_oracles.length, "oracles in subgraph", distinct_graph_oracles.length, "distinct, Found", db_oracles.length, "oracles in db");
     for (const oracle of graph_oracles) {
         if (!db_oracles.includes(oracle.token)) {
-            adapter_promises.push(addOracle({
+            await addOracle({
                 chainid: chainid,
                 asset: oracle.token,
                 oracle: oracle.oracle,
                 ts: oracle.blockTimestamp,
-            }));
+            });
         }
     }
-    await Promise.all(adapter_promises);
 }
 async function main() {
     await connect();
