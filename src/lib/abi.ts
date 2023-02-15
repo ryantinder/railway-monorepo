@@ -1356,6 +1356,147 @@ export const resonateABI = [
     },
 ] as const
 
-export const resonateAddresses: {[chainid: number] : string} = {
+export const resonateAddresses: { [chainid: number]: string } = {
     1: '0x80CA847618030Bc3e26aD2c444FD007279DaF50A'
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// priceProvider
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const priceProviderABI = [
+    { stateMutability: 'nonpayable', type: 'constructor', inputs: [] },
+    {
+        type: 'event',
+        anonymous: false,
+        inputs: [
+            {
+                name: 'previousOwner',
+                internalType: 'address',
+                type: 'address',
+                indexed: true,
+            },
+            {
+                name: 'newOwner',
+                internalType: 'address',
+                type: 'address',
+                indexed: true,
+            },
+        ],
+        name: 'OwnershipTransferred',
+    },
+    {
+        type: 'event',
+        anonymous: false,
+        inputs: [
+            {
+                name: 'token',
+                internalType: 'address',
+                type: 'address',
+                indexed: false,
+            },
+            {
+                name: 'oracle',
+                internalType: 'address',
+                type: 'address',
+                indexed: false,
+            },
+        ],
+        name: 'SetTokenOracle',
+    },
+    {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [{ name: 'token', internalType: 'address', type: 'address' }],
+        name: 'getCurrentPrice',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    },
+    {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [{ name: 'token', internalType: 'address', type: 'address' }],
+        name: 'getSafePrice',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    },
+    {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [
+            { name: 'token', internalType: 'address', type: 'address' },
+            { name: 'quote', internalType: 'address', type: 'address' },
+        ],
+        name: 'getValueOfAsset',
+        outputs: [{ name: 'safePrice', internalType: 'uint256', type: 'uint256' }],
+    },
+    {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'owner',
+        outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    },
+    {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [
+            { name: 'token', internalType: 'address', type: 'address' },
+            { name: 'quote', internalType: 'address', type: 'address' },
+        ],
+        name: 'pairHasOracle',
+        outputs: [{ name: 'hasOracle', internalType: 'bool', type: 'bool' }],
+    },
+    {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [{ name: '', internalType: 'address', type: 'address' }],
+        name: 'priceOracle',
+        outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    },
+    {
+        stateMutability: 'nonpayable',
+        type: 'function',
+        inputs: [],
+        name: 'renounceOwnership',
+        outputs: [],
+    },
+    {
+        stateMutability: 'nonpayable',
+        type: 'function',
+        inputs: [
+            { name: 'token', internalType: 'address', type: 'address' },
+            { name: 'oracle', internalType: 'address', type: 'address' },
+        ],
+        name: 'setTokenOracle',
+        outputs: [],
+    },
+    {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [{ name: 'token', internalType: 'address', type: 'address' }],
+        name: 'tokenHasOracle',
+        outputs: [{ name: 'hasOracle', internalType: 'bool', type: 'bool' }],
+    },
+    {
+        stateMutability: 'nonpayable',
+        type: 'function',
+        inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
+        name: 'transferOwnership',
+        outputs: [],
+    },
+    {
+        stateMutability: 'nonpayable',
+        type: 'function',
+        inputs: [{ name: 'token', internalType: 'address', type: 'address' }],
+        name: 'updateSafePrice',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    },
+] as const
+
+export const priceProviderAddress =
+    '0x0F89ba3F140Ea9370aB05d434B8e32fDf41a6093' as const
+
+export const priceProviderConfig = {
+    address: priceProviderAddress,
+    abi: priceProviderABI,
+} as const

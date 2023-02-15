@@ -1,17 +1,17 @@
 export interface Pool {
     chainid: number
-    poolId: string 
-    payoutAsset: string 
+    poolid: string 
+    payoutasset: string 
     vault: string 
-    vaultAsset: string 
+    vaultasset: string 
     rate: string 
-    addInterestRate: string 
-    lockupPeriod: number 
-    packetSize: string
-    packetSizeDecimals: number
-    packetVolume: string
-    isFixedTerm: boolean 
-    poolName: string 
+    addinterestrate: string 
+    lockupperiod: number 
+    packetsize: string
+    packetsizedecimals: number
+    packetvolume: string
+    isfixedterm: boolean 
+    poolname: string 
     creator: string
     ts: number
     tx: string

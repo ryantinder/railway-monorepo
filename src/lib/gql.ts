@@ -96,5 +96,28 @@ export interface Oracle {
     blockTimestamp: number
 }
 
+export const volumeQuery = (poolId: string) => {
+    return JSON.stringify({
+        query: `query {
+          capitalActivateds(where: {poolId: "${poolId}"}) {
+              numPackets
+          }
+      }`,
+        variables: {}
+    });
+}
+
+export interface volumeQueryResponse {
+    data: {
+        data: {
+            capitalActivateds: CapitalActivated[]
+        }
+    }
+}
+
+export interface CapitalActivated {
+    numPackets: string
+}
+
 
 
