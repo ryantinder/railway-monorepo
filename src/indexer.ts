@@ -24,24 +24,32 @@ async function reconcile(chainid: number) {
     const pool_promises: Promise<void>[] = []
     for (const pool of graph_pools) {
         if (!db_pools.includes(pool.poolId)) {
-            pool_promises.push(addPool({
-                chainid: chainid,
-                poolid: pool.poolId,
-                payoutasset: pool.payoutAsset,
-                vault: pool.vault,
-                vaultasset: pool.vaultAsset,
-                rate: pool.rate,
-                addinterestrate: pool.addInterestRate,
-                lockupperiod: parseInt(pool.lockupPeriod),
-                packetsize: pool.packetSize,
-                packetsizedecimals: isE6(pool.vaultAsset, chainid) ? 6 : 18,
-                isfixedterm: pool.isFixedTerm,
-                poolname: pool.poolName,
-                creator: pool.creator,
-                packetvolume: "0",
-                ts: pool.blockTimestamp,
-                tx: pool.transactionHash,
-            }));
+            console.log("Adding pool", pool.poolId, "to db");
+            console.log(pool)
+            try {
+                // Due to a bug in the contract, the second item in the pool created event is the payout asset
+                // the 4th item is the vault asset, despite what they are labelled.
+                await addPool({
+                    chainid: chainid,
+                    poolid: pool.poolId,
+                    payoutasset: pool.asset,
+                    vault: pool.vault,
+                    vaultasset: pool.payoutAsset,
+                    rate: pool.rate,
+                    addinterestrate: pool.addInterestRate,
+                    lockupperiod: parseInt(pool.lockupPeriod),
+                    packetsize: pool.packetSize,
+                    packetsizedecimals: isE6(pool.payoutAsset, chainid) ? 6 : 18,
+                    isfixedterm: pool.isFixedTerm,
+                    poolname: pool.poolName,
+                    creator: pool.creator,
+                    packetvolume: "0",
+                    ts: pool.blockTimestamp,
+                    tx: pool.transactionHash,
+                });
+            } catch (e) {
+                console.error("Error adding pool", pool.poolId, "to db", e);
+            }
         }
     }
     await Promise.all(pool_promises);

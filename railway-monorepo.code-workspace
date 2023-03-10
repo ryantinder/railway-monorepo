@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../resonate-railway/resonate-indexer"
+		}
+	],
+    "settings": {}
+}

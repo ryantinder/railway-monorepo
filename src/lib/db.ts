@@ -32,8 +32,15 @@ export const connect = async () => {
 // Add Pool to DB
 export const addPool = async (pool: Pool) => {
     // check if id alr exists
-    const res = await client.query(`SELECT * FROM POOLS WHERE poolid = '${pool.poolid}' AND chainId = ${pool.chainid}`);
-    if (res.rowCount == 0) {
+    console.log("here")
+    let res;
+    try {
+        res = await client.query(`SELECT * FROM POOLS WHERE poolid = '${pool.poolid}' AND chainId = ${pool.chainid}`);
+    } catch (e) {
+        console.error(e)
+    }
+    console.log("res", res)
+    if (res && res.rowCount == 0) {
         const sql = `CALL AddPool(${pool.chainid}, '${pool.poolid}', '${pool.payoutasset}', '${pool.vault}', '${pool.vaultasset}', '${pool.rate}', '${pool.addinterestrate}', '${pool.lockupperiod}', '${pool.packetsize}', ${pool.packetsizedecimals}, ${pool.isfixedterm}, '${pool.poolname.replace(/'/g, "").replace(/;/g, "")}', '${pool.creator}', ${pool.ts}, '${pool.tx}')`
         await client.query(sql)
         console.log(`[${pool.chainid}] PoolID = ${pool.poolid} added`)

@@ -31,7 +31,7 @@ export interface PoolCreated {
     poolId: string
     payoutAsset: string
     vault: string
-    vaultAsset: string
+    asset: string
     rate: string
     addInterestRate: string
     lockupPeriod: string
